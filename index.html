@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMKM Official Store</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* --- RESET & VARIABLES --- */
+      :root {
+        --primary: #00897b;
+        --primary-dark: #00695c;
+        --accent: #ff6f00;
+        --bg: #f8f9fa;
+        --white: #ffffff;
+        --text-dark: #333;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --radius: 12px;
+      }
+      * {
+        box-sizing: border-box;
+        outline: none;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        padding-bottom: 80px;
+      }
+
+      /* --- HEADER --- */
+      header {
+        background: var(--white);
+        padding: 15px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--primary);
+      }
+      .btn-header {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* --- LOGIN PAGE OVERLAY --- */
+      #login-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--white);
+        z-index: 2000; /* Paling atas */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .login-box {
+        width: 100%;
+        max-width: 350px;
+        text-align: center;
+      }
+
+      .login-box h2 {
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+      .login-box p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+      }
+
+      .login-input {
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        font-size: 1rem;
+        text-align: center;
+        transition: 0.3s;
+      }
+      .login-input:focus {
+        border-color: var(--primary);
+      }
+
+      .btn-login-submit {
+        width: 100%;
+        padding: 15px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+      .btn-login-cancel {
+        width: 100%;
+        padding: 15px;
+        background: transparent;
+        color: #888;
+        border: none;
+        cursor: pointer;
+      }
+      .error-msg {
+        color: red;
+        font-size: 0.8rem;
+        display: none;
+        margin-bottom: 10px;
+      }
+
+      /* --- ADMIN PANEL --- */
+      #admin-panel {
+        display: none;
+        background: white;
+        padding: 20px;
+        margin: 15px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid #e0e0e0;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .btn-action {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      /* --- CATALOG --- */
+      .container {
+        padding: 15px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      /* --- CARD --- */
+      .card {
+        background: var(--white);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+      }
+      .card-img-wrapper {
+        height: 140px;
+        background: #eee;
+      }
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .card-body {
+        padding: 12px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .product-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        height: 40px;
+        overflow: hidden;
+      }
+      .product-price {
+        color: var(--accent);
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .btn-detail-card {
+        margin-top: auto;
+        background: transparent;
+        border: 1px solid #ddd;
+        color: #666;
+        font-size: 0.75rem;
+        padding: 6px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .btn-wa-card {
+        display: block;
+        margin-top: 8px;
+        background: #25d366;
+        color: white;
+        text-align: center;
+        padding: 8px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      /* --- ADMIN TOOLS --- */
+      .admin-tools {
+        display: none;
+        padding: 8px;
+        background: #f1f1f1;
+        gap: 5px;
+      }
+      .admin-tools button {
+        flex: 1;
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+      }
+      .btn-del {
+        background: #ef5350;
+      }
+      .btn-edt {
+        background: #42a5f5;
+      }
+      .show-flex {
+        display: flex !important;
+      }
+
+      /* --- MODAL DETAIL --- */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-box {
+        background: white;
+        width: 100%;
+        max-width: 350px;
+        border-radius: 16px;
+        padding: 20px;
+        position: relative;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .modal-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+      .modal-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+      .modal-price {
+        color: var(--accent);
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+      }
+      .modal-desc {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .btn-wa-modal {
+        display: block;
+        background: #25d366;
+        color: white;
+        text-align: center;
+        padding: 12px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🛍️ UMKM Berkah</h1>
+      <button id="loginBtn" class="btn-header" onclick="showLoginPage()">
+        🔒 Admin
+      </button>
+    </header>
+
+    <div id="login-overlay">
+      <div class="login-box">
+        <h2>Login Admin</h2>
+        <p>Masukkan password untuk mengelola produk.</p>
+        <div id="errorMsg" class="error-msg">Password Salah! Coba lagi.</div>
+
+        <input
+          type="password"
+          id="passwordInput"
+          class="login-input"
+          placeholder="Password..."
+        />
+
+        <button class="btn-login-submit" onclick="checkLogin()">MASUK</button>
+        <button class="btn-login-cancel" onclick="hideLoginPage()">
+          Kembali ke Toko
+        </button>
+      </div>
+    </div>
+
+    <div id="admin-panel">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+        "
+      >
+        <h3>Kelola Produk</h3>
+        <button
+          onclick="logout()"
+          style="
+            background: #eee;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+          "
+        >
+          Logout
+        </button>
+      </div>
+      <input type="hidden" id="prodId" />
+      <input type="text" id="prodName" placeholder="Nama Produk" />
+      <input type="number" id="prodPrice" placeholder="Harga (Rp)" />
+      <input type="text" id="prodImg" placeholder="Link URL Gambar" />
+      <textarea
+        id="prodDesc"
+        rows="3"
+        placeholder="Deskripsi & Komposisi"
+      ></textarea>
+      <button class="btn-action" onclick="saveProduct()">💾 Simpan Data</button>
+    </div>
+
+    <div class="container">
+      <div class="grid" id="catalog"></div>
+    </div>
+
+    <div
+      id="detailModal"
+      class="modal-overlay"
+      onclick="if(event.target.id==='detailModal') closeModal()"
+    >
+      <div class="modal-box">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <img id="modalImg" class="modal-img" src="" />
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <a id="modalWaLink" href="#" target="_blank" class="btn-wa-modal"
+          >Beli via WhatsApp</a
+        >
+      </div>
+    </div>
+
+    <script>
+      // DATA & VARS
+      const dummyData = [
+        {
+          id: 1,
+          name: "Keripik Singkong Pedas",
+          price: 15000,
+          img: "image/singkong.jpg",
+          desc: "Singkong renyah bumbu balado.",
+        },
+        {
+          id: 2,
+          name: "Kopi Bubuk Robusta",
+          price: 45000,
+          img: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=300&q=80",
+          desc: "Kopi hitam asli 100%.",
+        },
+        {
+          id: 3,
+          name: "Sambal Bawang",
+          price: 30000,
+          img: "image/sambal.jpg",
+          desc: "Pedas nampol bawang asli.",
+        },
+        {
+          id: 4,
+          name: "Nastar Wisman",
+          price: 85000,
+          img: "image/nastar.jpg",
+          desc: "Lumer dimulut, wisman asli.",
+        },
+        {
+          id: 5,
+          name: "Madu Hutan",
+          price: 120000,
+          img: "image/madu.jpeg",
+          desc: "Madu murni tanpa campuran.",
+        },
+        {
+          id: 6,
+          name: "Basreng Pedas",
+          price: 12000,
+          img: "image/basreng.jpg",
+          desc: "Bakso goreng rasa jeruk.",
+        },
+        {
+          id: 7,
+          name: "Batik Tulis",
+          price: 250000,
+          img: "image/batik.jpg",
+          desc: "Batik pekalongan halus.",
+        },
+        {
+          id: 8,
+          name: "Dodol Garut",
+          price: 25000,
+          img: "image/dodol.jpg",
+          desc: "Manis legit gula asli.",
+        },
+        {
+          id: 9,
+          name: "Teh Hijau",
+          price: 20000,
+          img: "https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?auto=format&fit=crop&w=300&q=80",
+          desc: "Teh kesehatan diet.",
+        },
+        {
+          id: 10,
+          name: "Brownies",
+          price: 55000,
+          img: "image/brownis.jpg",
+          desc: "Coklat banget fudgy.",
+        },
+      ];
+
+      let products = JSON.parse(localStorage.getItem("umkmData")) || dummyData;
+      let isAdmin = false;
+      const phoneOwner = "6281234567890";
+
+      // RENDER
+      function renderProducts() {
+        const catalog = document.getElementById("catalog");
+        catalog.innerHTML = "";
+        products.forEach((p) => {
+          const priceFmt = new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+          }).format(p.price);
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+                    <div class="card-img-wrapper" onclick="showDetail(${
+                      p.id
+                    })"><img src="${
+            p.img
+          }" onerror="this.src='https://via.placeholder.com/300'"></div>
+                    <div class="card-body">
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-price">${priceFmt}</div>
+                        <button class="btn-detail-card" onclick="showDetail(${
+                          p.id
+                        })">Lihat Detail</button>
+                        <a href="https://wa.me/${phoneOwner}?text=Halo, pesan *${
+            p.name
+          }*" target="_blank" class="btn-wa-card">Beli</a>
+                    </div>
+                    <div class="admin-tools ${isAdmin ? "show-flex" : ""}">
+                        <button class="btn-edt" onclick="editProduct(${
+                          p.id
+                        })">Edit</button>
+                        <button class="btn-del" onclick="deleteProduct(${
+                          p.id
+                        })">Hapus</button>
+                    </div>
+                `;
+          catalog.appendChild(card);
+        });
+        localStorage.setItem("umkmData", JSON.stringify(products));
+      }
+
+      // LOGIN SYSTEM (CUSTOM PAGE)
+      function showLoginPage() {
+        if (isAdmin) return; // Kalau sudah login, diam saja
+        document.getElementById("login-overlay").style.display = "flex";
+        document.getElementById("passwordInput").value = "";
+        document.getElementById("errorMsg").style.display = "none";
+        document.getElementById("passwordInput").focus();
+      }
+
+      function hideLoginPage() {
+        document.getElementById("login-overlay").style.display = "none";
+      }
+
+      function checkLogin() {
+        const pass = document.getElementById("passwordInput").value;
+        if (pass === "admin123") {
+          isAdmin = true;
+          hideLoginPage();
+          document.getElementById("admin-panel").style.display = "block";
+          document.getElementById("loginBtn").style.display = "none"; // Sembunyikan tombol login header
+          renderProducts();
+        } else {
+          document.getElementById("errorMsg").style.display = "block";
+        }
+      }
+
+      function logout() {
+        isAdmin = false;
+        document.getElementById("admin-panel").style.display = "none";
+        document.getElementById("loginBtn").style.display = "block"; // Munculkan lagi
+        document.getElementById("loginBtn").innerText = "🔒 Admin";
+
+        // Bersihkan form
+        document.getElementById("prodId").value = "";
+        document.getElementById("prodName").value = "";
+        document.getElementById("prodPrice").value = "";
+        document.getElementById("prodImg").value = "";
+        document.getElementById("prodDesc").value = "";
+
+        renderProducts();
+      }
+
+      // CRUD FUNCTIONS
+      function saveProduct() {
+        const id = document.getElementById("prodId").value;
+        const name = document.getElementById("prodName").value;
+        const price = document.getElementById("prodPrice").value;
+        const img =
+          document.getElementById("prodImg").value ||
+          "https://via.placeholder.com/300";
+        const desc = document.getElementById("prodDesc").value;
+
+        if (!name || !price) {
+          alert("Nama dan Harga wajib!");
+          return;
+        }
+
+        if (id) {
+          const idx = products.findIndex((p) => p.id == id);
+          products[idx] = {
+            id: parseInt(id),
+            name,
+            price: parseInt(price),
+            img,
+            desc,
+          };
+        } else {
+          products.push({
+            id: Date.now(),
+            name,
+            price: parseInt(price),
+            img,
+            desc,
+          });
+        }
+
+        // Clear form
+        document.getElementById("prodId").value = "";
+        document.getElementById("prodName").value = "";
+        document.getElementById("prodPrice").value = "";
+        document.getElementById("prodImg").value = "";
+        document.getElementById("prodDesc").value = "";
+
+        renderProducts();
+        alert("Tersimpan!");
+      }
+
+      function editProduct(id) {
+        const p = products.find((p) => p.id == id);
+        document.getElementById("prodId").value = p.id;
+        document.getElementById("prodName").value = p.name;
+        document.getElementById("prodPrice").value = p.price;
+        document.getElementById("prodImg").value = p.img;
+        document.getElementById("prodDesc").value = p.desc;
+        document
+          .getElementById("admin-panel")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      function deleteProduct(id) {
+        if (confirm("Hapus?")) {
+          products = products.filter((p) => p.id !== id);
+          renderProducts();
+        }
+      }
+
+      // MODAL DETAIL
+      function showDetail(id) {
+        const p = products.find((p) => p.id == id);
+        document.getElementById("modalImg").src = p.img;
+        document.getElementById("modalTitle").innerText = p.name;
+        document.getElementById("modalPrice").innerText = new Intl.NumberFormat(
+          "id-ID",
+          { style: "currency", currency: "IDR", maximumFractionDigits: 0 }
+        ).format(p.price);
+        document.getElementById("modalDesc").innerText = p.desc;
+        document.getElementById(
+          "modalWaLink"
+        ).href = `https://wa.me/${phoneOwner}?text=Halo, pesan *${p.name}*`;
+        document.getElementById("detailModal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("detailModal").style.display = "none";
+      }
+
+      renderProducts();
+    </script>
+  </body>
+</html>
